@@ -18,9 +18,10 @@ const CompanyRouter = ({ match }) => {
          <Switch>
             <Route
                exact
-               path={match.url + '/single/:id'}
+               path={match.url + '/single'}
                component={JobSingle}
             />
+         
             <Route
                exact
                path={match.url + '/AllJobs'}

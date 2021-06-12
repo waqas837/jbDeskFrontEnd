@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState,useEffect } from 'react';
 import SearchBar from 'material-ui-search-bar';
-
+import {NavLink,useHistory} from "react-router-dom"
+import {Menu,MenuItem,Paper,Popper} from '@material-ui/core';
 import {
    AppBar,
    Toolbar,
@@ -38,11 +39,24 @@ const Navbar = (props) => {
    const [drawerOpen, setDrawerOpen] = useState(false);
    const [openlogin, setopenlogin] = useState(false);
    const [searchValue, setSearchValue] = useState('');
-
+   useEffect(()=>{},[setDrawerOpen,setopenlogin])
+   const history = useHistory()
    const toggleDrawer = () => {
       setDrawerOpen(!drawerOpen);
    };
-
+   // set things for the popper
+   const [anchorEl, setAnchorEl] = React.useState(null);
+   const handleMouseOver= (event) => {
+     setAnchorEl(event.currentTarget);
+   };
+   const handleClose = () => {
+     setAnchorEl(null);
+   };
+const logout = () =>{
+   localStorage.removeItem("user");
+   localStorage.removeItem("token")
+   window.location.reload();
+}
    const classes = Styles(styleProps);
 
    const isActive = (slug) => {
@@ -72,6 +86,8 @@ const Navbar = (props) => {
                   <Typography
                      variant='h6'
                      className={classes.LinkItem}
+                     component={NavLink}
+                     to="/"
                      style={{
                         color:
                            location.pathname === '/'
@@ -86,8 +102,11 @@ const Navbar = (props) => {
                      Home
                   </Typography>
                   <Typography
+                     onMouseOver={handleMouseOver}
                      variant='h6'
                      className={classes.LinkItem}
+                     component={NavLink}
+                     to="/jobs"
                      style={{
                         color: isActive('jobs')
                            ? theme.palette.pink
@@ -99,7 +118,20 @@ const Navbar = (props) => {
                   >
                      Jobs
                   </Typography>
+                  {/* content for job */}
+                  <Menu 
+        className={classes.dropdown}
+        anchorEl={anchorEl}
+        keepMounted
+        open={Boolean(anchorEl)}
+        onClose={handleClose}
+      >
+        <MenuItem onClick={()=>history.push("/jobs/single")}>Single Job</MenuItem>
+        <MenuItem onClick={()=>history.push("/jobs/all")}>All Jobs</MenuItem>
+       </Menu>
                   <Typography
+                   component={NavLink}
+                     to="/candidates"
                      variant='h6'
                      className={classes.LinkItem}
                      style={{
@@ -111,9 +143,13 @@ const Navbar = (props) => {
                            : '',
                      }}
                   >
+                  {/* content for jobs popper */}
+                  
                      Candiates
                   </Typography>
                   <Typography
+                   component={NavLink}
+                     to="/pages"
                      variant='h6'
                      className={classes.LinkItem}
                      style={{
@@ -129,6 +165,9 @@ const Navbar = (props) => {
                   </Typography>
                   <Typography
                      variant='h6'
+                     component={NavLink}
+                     exact
+                     to="/company/dashboard"
                      className={classes.LinkItem}
                      style={{
                         color: isActive('dashboard')
@@ -142,6 +181,8 @@ const Navbar = (props) => {
                      Dashboard
                   </Typography>
                   <Typography
+                   component={NavLink}
+                     to="/blog"
                      variant='h6'
                      className={classes.LinkItem}
                      style={{
@@ -157,6 +198,8 @@ const Navbar = (props) => {
                   </Typography>
                   <Typography
                      variant='h6'
+                     component={NavLink}
+                     to="/contact"
                      className={classes.LinkItem}
                      style={{
                         color: isActive('contact')
@@ -175,22 +218,15 @@ const Navbar = (props) => {
                </div>
                <div className={classes.ProfileBox}>
                   <div>
-                    {user?<img
-                        style={{
-                           width: 60,
-                           cursor: 'pointer',
-                        }}
-                        src='https://ui-avatars.com/api/?rounded=true'
-                        alt=''
-                     />:<Button
+                    {user?<Button
+                      style={{borderRadius:"0px"}}
+                      onClick={logout}
+                      color="secondary"
+                      variant="contained">Logout</Button>:<Button
                       style={{borderRadius:"0px"}}
                       onClick={()=>setopenlogin(true)}
                       color="secondary"
                       variant="contained">Login</Button>}
-                  </div>
-                  <div className={classes.ProfileTxt}>
-                     <p className={classes.Txt1}>Luca Wallace</p>
-                     <p className={classes.Txt2}>Luca@example.com</p>
                   </div>
                   <div
                      className={classes.toggleBtn}

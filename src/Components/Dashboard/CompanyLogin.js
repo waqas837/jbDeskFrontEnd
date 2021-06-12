@@ -1,4 +1,5 @@
 import React,{useState,useEffect} from 'react'
+import {useHistory} from "react-router-dom"
 import { Box, Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, IconButton, OutlinedInput, Typography } from '@material-ui/core'
 import Register from "../UserDialog/Register"
 import toast, { Toaster } from 'react-hot-toast';
@@ -6,16 +7,19 @@ import {url} from "../../Api/Url"
 import { Close, Email, Lock } from '@material-ui/icons';
 import {useStyles} from "../../Styles/LoginDialog/LoginDialog.styles"
 import axios from 'axios';
-const Login = ({openlogin,setopenlogin}) => {
-    const classes = useStyles();
-    const [openRegister, setopenRegister] = useState(false);
-    const [state, setstate] = useState(false);
-    const [loading, setloading] = useState(false);
+const CompanyLogin = ({openlogin,setopenlogin}) => {
+    const company = localStorage.getItem("user")
+    const companyemail = localStorage.getItem("email")
+    const history = useHistory()
+    const classes = useStyles()
+    const [state,setstate] = useState()
+    const [loading,setloading] = useState(false)
+    // go and logic company account
     const login = async () =>{
         setloading(true)
 try {
-   const {data} = await axios.post(`${url}/login`,state)
-   console.log(data.token)
+   const {data} = await axios.post(`${url}/logincompany`,state)
+    
    if(data.err){
   toast.error("Invalid email/password")
   setloading(false)
@@ -23,9 +27,11 @@ try {
    if(data.status==="ok"){
        localStorage.setItem("token",data.token)
        localStorage.setItem("user",data.userData.username)
+       localStorage.setItem("useremail",data.userData.email)
        setloading(false)
        toast.success("Login successfully")
        setopenlogin(false)
+       window.location.reload();
    }
 } catch (error) {
     console.log(error);
@@ -33,24 +39,33 @@ try {
     }
     //open Register dialog and close the sign in
     const registerUserDialog = () =>{
-        setopenlogin(false)
-        setopenRegister(true)
+        // setopenlogin(false)
+        // setopenRegister(true)
     }
+const checkClose = () =>{
+    if(company){
+        setopenlogin(false)
+    }
+    if(!company){
+        history.push("/")
+    }
+}
     return (
-        // drawer for login
         <div>
-        
-        <Register openRegister={openRegister}  setopenRegister={setopenRegister}/>
-        <Toaster/>
-        {/* Click to open above register drawer */}
-            <Dialog
-             open={openlogin} onClose={()=>setopenlogin(false)}>
+          <Dialog
+             open={openlogin} onClose={checkClose}
+             BackdropProps={{
+            classes: {
+            root: classes.backDrop,
+        },
+      }}
+             >
             <DialogTitle><Box textAlign="center">
             <Typography variant="h5" color="secondary">
                 Login!
             </Typography></Box>
             <Box className={classes.closeButton}><IconButton
-            onClick={()=>setopenlogin(false)}
+            onClick={checkClose}
             ><Close fontSize="small"/></IconButton></Box></DialogTitle>
             <DialogContent>
                 <DialogContentText>Login to our site and find more services</DialogContentText>
@@ -79,7 +94,7 @@ try {
             color="secondary"
             variant="contained"
             className={classes.buttonRadius}
-             onClick={login}
+                onClick={login}
                 >Log In</Button>}
                 </Box>
             </DialogContent>
@@ -91,7 +106,7 @@ try {
                 color="secondary"
                 variant="outlined"
                 className={classes.buttonRadius}
-                onClick={registerUserDialog}
+                // onClick={registerUserDialog}
                 >Sign up</Button>
             </DialogActions>
                 
@@ -100,4 +115,4 @@ try {
     )
 }
 
-export default Login;
+export default CompanyLogin

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState,useEffect } from 'react';
 import {
    Button,
    Grid,
@@ -42,16 +42,28 @@ import {
    Linkedin,
    Briefcase,
 } from 'react-feather';
+import CompanyLogin from './CompanyLogin';
 
 const CompanyDashboard = () => {
    const theme = useTheme();
    const styleProps = {
       theme,
    };
-
+   const company = localStorage.getItem("user")
+   const companyemail = localStorage.getItem("useremail")
+   
+   const [openlogin,setopenlogin] = useState(true)
    const classes = Styles(styleProps);
+   const logout = () =>{
+      localStorage.removeItem("user");
+      localStorage.removeItem("useremail");
+      localStorage.removeItem("token")
+      window.location.reload();
+   }
+
    return (
       <>
+      {company?null:<CompanyLogin openlogin={openlogin} setopenlogin={setopenlogin}/>}
          <Grid
             container
             spacing={4}
@@ -74,8 +86,8 @@ const CompanyDashboard = () => {
                         alt='Profile Picture'
                      />
                      <div>
-                        <p>Luco Wallace</p>
-                        <p className={classes.Txt2}>@Username</p>
+                        <p>{companyemail}</p>
+                        <p className={classes.Txt2}>{company}</p>
                      </div>
                      <div className={classes.ProfileDetails}>
                         <div
@@ -127,7 +139,6 @@ const CompanyDashboard = () => {
                            <div>Post New Job</div>
                         </div>
                      </li>
-
                      <li className={classes.NavItem}>
                         <div className={classes.ListItemContent}>
                            <div className={classes.ListIcon}>
@@ -148,7 +159,9 @@ const CompanyDashboard = () => {
                   </ul>
                   <ul className={classes.LogoutSection}>
                      <li className={classes.NavItem}>
-                        <div className={classes.ListItemContent}>
+                        <div className={classes.ListItemContent} 
+                        onClick={logout}
+                        >
                            <div className={classes.ListIcon}>
                               <PowerIcon />
                            </div>
