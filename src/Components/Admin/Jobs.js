@@ -323,6 +323,17 @@ const Jobs = () => {
                     />
                   </Grid>
                   <Grid item xs={6} sm={6} md={6} lg={6} xl={6}>
+                    Company Logo:
+                    <Input
+                      type="file"
+                      name="image"
+                      fullWidth
+                      onChange={onChangeFile}
+                      style={{ marginBottom: "10px" }}
+                      required="true"
+                    />
+                  </Grid>
+                  <Grid item xs={6} sm={6} md={6} lg={6} xl={6}>
                     <Input
                       fullWidth
                       onChange={(e) =>
@@ -456,17 +467,7 @@ const Jobs = () => {
                       required="true"
                     />
                   </Grid>
-                  <Grid item xs={6} sm={6} md={6} lg={6} xl={6}>
-                    Company Logo:
-                    <Input
-                      type="file"
-                      name="image"
-                      fullWidth
-                      onChange={onChangeFile}
-                      style={{ marginBottom: "10px" }}
-                      required="true"
-                    />
-                  </Grid>
+                  
                 </Grid>
                 <br />
 
@@ -611,7 +612,7 @@ const Jobs = () => {
           {/* colomn1 */}
           <Grid item xs={6} sm={6} md={6} lg={6} xl={6}>
             <Typography variant="h4" color="secondary" component={Box}>
-              User Panel
+              Admin Panel
             </Typography>
           </Grid>
           {/* colomn2 */}
