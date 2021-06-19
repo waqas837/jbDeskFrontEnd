@@ -1,9 +1,12 @@
-import React from 'react';
+import React,{useEffect, useState} from 'react';
 import PageHeader from '../Reuseables/PageHeader';
 import KeyboardBackspaceIcon from '@material-ui/icons/KeyboardBackspace';
 import ArrowRightAltIcon from '@material-ui/icons/ArrowRightAlt';
 import Styles from '../../Styles/Jobs Styles/SigleJobStyles';
-import {
+import axios from "axios"
+import {url} from "../../Api/Url"
+import {imgurl} from "../../Api/Url"
+ import {
    Box,
    Button,
    Divider,
@@ -12,11 +15,10 @@ import {
    ListItem,
    ListItemAvatar,
    ListItemText,
-   useTheme,
+   useTheme,LinearProgress,Snackbar 
 } from '@material-ui/core';
-
-import Image1 from '../../Assets/Images/overview.png';
-
+import {Alert} from "@material-ui/lab"
+// import logo from "../../Assets/Images/logo.jpg"
 import it3 from '../../Assets/Images/lt3.png';
 import it4 from '../../Assets/Images/lt4.png';
 import it5 from '../../Assets/Images/lt5.png';
@@ -28,17 +30,49 @@ const SingleJob = () => {
       ...PageHeader,
       theme,
    };
+   const token = localStorage.getItem("token")
+   const [state, setstate] = useState("")
+   const [loading, setloading] = useState(null)
+   const [open, setopen] = useState(false);
+   const headers={
+      authorization :`Bearer ${token}`
+   }
+useEffect(() => {
+   getJobSingle()
+}, [])
+
+//get data for a single job
+const getJobSingle= async () =>{
+   try {
+   setloading(true)
+    const {data} = await axios.get(`${url}/getsinglejob`,{headers})
+    console.log(data.results[0])
+    setstate(data.results[0])
+    setloading(false)
+   } catch (error) {
+    console.log(error)
+    setopen(true)
+    setloading(false)
+   }
+}
+ 
 
    const classes = Styles(styleProps);
 
    return (
       <>
+      <Snackbar open={open} autoHideDuration={6000} onClose={()=>setopen(false)}>
+        <Alert onClose={()=>setopen(false)} severity="error">
+          Server Error
+        </Alert>
+      </Snackbar>
          <PageHeader
             title={'Job Listing'}
             pathName={'Job Sigle'}
             path={'/jobs/listing'}
          />
-         <Grid
+        {loading?<LinearProgress color="secondary"/>:
+        <Grid
             container
             className={classes.GridContainer}
             spacing={4}
@@ -63,19 +97,20 @@ const SingleJob = () => {
                      padding='30px'
                   >
                      <Box>
-                        <img
-                           src={Image1}
+                         <img
+                           src={`${imgurl}/${state.logo}`} 
                            style={{
                               margin: 'auto',
                            }}
                            alt=''
                         />
+               
                         <h5
                            style={{
                               fontFamily: 'Poppins',
                            }}
                         >
-                           HTML Developer (1 - 2 Yrs Exp.)
+                           {state.category} 
                         </h5>
                         <p
                            style={{
@@ -83,7 +118,7 @@ const SingleJob = () => {
                            }}
                            className={classes.P}
                         >
-                           Webstrot Technology Pvt. Ltd.
+                           {state.companyname}.
                         </p>
                         <Box
                            style={{
@@ -107,7 +142,7 @@ const SingleJob = () => {
                                  variant='contained'
                                  className={classes.ProfileBtn}
                               >
-                                 Part Time
+                                 {state.time}
                               </Button>
                            </div>
                         </Box>
@@ -119,7 +154,7 @@ const SingleJob = () => {
                            </ListItemAvatar>
                            <ListItemText
                               primary='Date Posted :'
-                              secondary='october 02 , 2021'
+                              secondary={state.date}
                            />
                         </ListItem>
                         <ListItem className={classes.ListItem}>
@@ -128,7 +163,7 @@ const SingleJob = () => {
                            </ListItemAvatar>
                            <ListItemText
                               primary='Location'
-                              secondary='Los Angeles'
+                              secondary={state.location}
                            />
                         </ListItem>
                         <ListItem className={classes.ListItem}>
@@ -137,7 +172,7 @@ const SingleJob = () => {
                            </ListItemAvatar>
                            <ListItemText
                               primary='Job Title:'
-                              secondary='HTML Programmer'
+                              secondary={state.jobtitle}
                            />
                         </ListItem>
                         <ListItem className={classes.ListItem}>
@@ -146,7 +181,7 @@ const SingleJob = () => {
                            </ListItemAvatar>
                            <ListItemText
                               primary='Hours :'
-                              secondary='43 Hr / Week'
+                              secondary={state.totalhrs}
                            />
                         </ListItem>
                         <ListItem className={classes.ListItem}>
@@ -155,7 +190,7 @@ const SingleJob = () => {
                            </ListItemAvatar>
                            <ListItemText
                               primary='Salary :'
-                              secondary='$12k-15k'
+                              secondary={state.salary}
                            />
                         </ListItem>
                         <ListItem className={classes.ListItem}>
@@ -164,7 +199,7 @@ const SingleJob = () => {
                            </ListItemAvatar>
                            <ListItemText
                               primary='Category :'
-                              secondary='Developer'
+                              secondary= {state.category} 
                            />
                         </ListItem>
                         <ListItem className={classes.ListItem}>
@@ -173,7 +208,7 @@ const SingleJob = () => {
                            </ListItemAvatar>
                            <ListItemText
                               primary='Experience :'
-                              secondary='1+ Years of Experience'
+                              secondary={state.experience}
                            />
                         </ListItem>
                      </List>
@@ -231,19 +266,7 @@ const SingleJob = () => {
                            Job Description
                         </h3>
                         <p>
-                           Google is and always will be an engineering
-                           company. We hire people with a broad set of
-                           ical skills who are ready to tackle some of
-                           technology's greatest challenges and make
-                           an impact on millions, if not billions, of
-                           users. At Google, engineers not only
-                           revolutionize search, they routinely work
-                           on massive scalability and storage
-                           solutions, large-scale applications and
-                           rely new platforms for developers around
-                           the world. From AdWords to Chrome, Android
-                           to Ye, Social to Local, Google engineers
-                           are changing the world.
+                           {state.jobdescription}
                         </p>
 
                         <Box
@@ -275,13 +298,7 @@ const SingleJob = () => {
                            Responsibilities
                         </h3>
                         <p>
-                           Curabitur non nulla sit amet nisl tempus
-                           convallis quis ac lectus. Mauris blandit
-                           aliquet elit, eget tincidunt nibh pulvinar
-                           a. Praesent sapien massa, convallis a
-                           pellentesque nec, egestas non nisi.
-                           Curabitur aliquet quam id dui posuere
-                           blandit.
+                           {state.jobresp}
                         </p>
 
                         <Box
@@ -322,13 +339,7 @@ const SingleJob = () => {
                            Minimal Qualifications
                         </h3>
                         <p>
-                           Curabitur non nulla sit amet nisl tempus
-                           convallis quis ac lectus. Mauris blandit
-                           aliquet elit, eget tincidunt nibh pulvinar
-                           a. Praesent sapien massa, convallis a
-                           pellentesque nec, egestas non nisi.
-                           Curabitur aliquet quam id dui posuere
-                           blandit.
+                           {state.minimumqulification}
                         </p>
 
                         <Box
@@ -369,13 +380,7 @@ const SingleJob = () => {
                            How to Apply
                         </h3>
                         <p>
-                           Google is and always will be an engineering
-                           company. We hire people with a broad set of
-                           ical skills who are ready to tackle some of
-                           technology's greatest challenges and make
-                           an impact on millions, if not billions, of
-                           users. At Google, engineers not only
-                           revolutionize search, they routinely
+                           {state.howtoapply}
                         </p>
                      </Box>
 
@@ -388,6 +393,7 @@ const SingleJob = () => {
                         <h3 className={classes.ParagraphHeader}>
                            Location
                         </h3>
+                        {state.location}
                      </Box>
                      <Divider />
                      <Box
@@ -401,6 +407,7 @@ const SingleJob = () => {
                            margin: 'auto',
                         }}
                      >
+                     
                         Share :
                         <List
                            style={{
@@ -574,7 +581,7 @@ const SingleJob = () => {
                   </Grid>
                </Grid>
             </Grid>
-         </Grid>
+         </Grid>}
       </>
    );
 };

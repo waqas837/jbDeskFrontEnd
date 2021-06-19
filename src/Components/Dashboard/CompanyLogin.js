@@ -6,10 +6,12 @@ import toast, { Toaster } from 'react-hot-toast';
 import {url} from "../../Api/Url"
 import { Close, Email, Lock } from '@material-ui/icons';
 import {useStyles} from "../../Styles/LoginDialog/LoginDialog.styles"
+import jwt from "jsonwebtoken"
 import axios from 'axios';
 const CompanyLogin = ({openlogin,setopenlogin}) => {
-    const company = localStorage.getItem("user")
-    const companyemail = localStorage.getItem("email")
+     const token = localStorage.getItem("token");
+     const user = localStorage.getItem("email");
+     const decode = jwt.decode(token)
     const history = useHistory()
     const classes = useStyles()
     const [state,setstate] = useState()
@@ -26,8 +28,8 @@ try {
    }
    if(data.status==="ok"){
        localStorage.setItem("token",data.token)
-       localStorage.setItem("user",data.userData.username)
-       localStorage.setItem("useremail",data.userData.email)
+       localStorage.setItem("username",data.userData.username)
+       localStorage.setItem("email",data.userData.email)
        setloading(false)
        toast.success("Login successfully")
        setopenlogin(false)
@@ -43,10 +45,10 @@ try {
         // setopenRegister(true)
     }
 const checkClose = () =>{
-    if(company){
+    if(user!==null && decode.email!==null && user===decode.email){
         setopenlogin(false)
     }
-    if(!company){
+    else{
         history.push("/")
     }
 }

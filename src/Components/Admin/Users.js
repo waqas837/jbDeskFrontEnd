@@ -38,7 +38,7 @@ import {
 } from "@material-ui/core";
 import { Edit, Delete, Close } from "@material-ui/icons";
 import toast, { Toaster } from "react-hot-toast";
-// import DrawerData from "../DrawerData/DrawerData";
+import DrawerData from "../Admin/DrawerData"
 // import AddHotelManager from "../AddHotelManger/AddHotelManager";
 const useStyles = makeStyles((theme) => ({
   root: {},
@@ -197,7 +197,7 @@ const Users = () => {
   return (
     <div>
       <Toaster />
-      {/* <DrawerData opendrawer={opendrawer} setopendrawer={setopendrawer}/> */}
+      <DrawerData opendrawer={opendrawer} setopendrawer={setopendrawer}/>
       {/* add the hotel manager */}
       {/* <AddHotelManager openfour={openfour} setopenfour={setopenfour}/> */}
       {/* navbar */}
@@ -205,7 +205,7 @@ const Users = () => {
         <Toolbar>
           {/* menu icon button */}
           <IconButton onClick={() => setopendrawer(true)}>
-            <Menu style={{ color: "rgb(254,170,2)" }} />
+            <Menu color="secondary"/>
           </IconButton>
           {/* logo */}
           <Button
@@ -237,7 +237,7 @@ const Users = () => {
             <Grid item>
               <Typography
                 variant="h4"
-                color="primary"
+                color="secondary"
                 style={{ textAlign: "left" }}
               >
                 Register
@@ -304,7 +304,7 @@ const Users = () => {
                   style={{
                     marginBottom: "10px",
                     backgroundColor: "rgb(254,181,2)",
-                    color: "black",
+                     
                   }}
                   color="primary"
                   startIcon={<ClipLoader size="10" color="black" />}
@@ -316,12 +316,12 @@ const Users = () => {
                   fullWidth
                   style={{
                     marginBottom: "10px",
-                    backgroundColor: "rgb(254,181,2)",
-                    color: "black",
                   }}
-                  color="primary"
+                  color="secondary"
                   onClick={userSignsUp}
+                  variant="contained"
                 >
+
                   Add User
                 </Button>
               )}
@@ -342,7 +342,7 @@ const Users = () => {
             <Grid item>
               <Typography
                 variant="h4"
-                color="primary"
+                color="secondary"
                 style={{ textAlign: "left" }}
               >
                 Register
@@ -421,10 +421,9 @@ const Users = () => {
                   fullWidth
                   style={{
                     marginBottom: "10px",
-                    backgroundColor: "rgb(254,181,2)",
-                    color: "black",
                   }}
-                  color="primary"
+                  color="secondary"
+                  variant="contained"
                   onClick={updateUser}
                 >
                   Update User
@@ -440,7 +439,7 @@ const Users = () => {
           <Grid item xs={6} sm={6} md={6} lg={6} xl={6}>
             <Typography
               variant="h4"
-              style={{ color: "rgb(254,170,2)" }}
+              color="secondary"
               component={Box}
             >
               User Panel
@@ -449,12 +448,12 @@ const Users = () => {
           {/* colomn2 */}
           <Grid item xs={6} sm={6} md={6} lg={6} xl={6}>
             <Button
+             color="secondary"
               style={{
                 height: "37px",
                 fontSize: "10px",
-                color: "black",
                 marginLeft: "60px",
-                background: "rgb(254,170,2)",
+                
               }}
               onClick={() => setOpenthree(true)}
               size="small"

@@ -79,7 +79,7 @@ const Admin = () => {
   const history = useHistory();
   
   useEffect(() => {}, []);
-  const admin = localStorage.getItem("useremail");
+  const admin = localStorage.getItem("email");
   const [state, setstate] = useState([]);
   const [stateS, setstateS] = useState([]);
   const [loadingS, setloadingS] = useState(false);
@@ -98,8 +98,8 @@ const Admin = () => {
 
   // admin logout
   const logoutAdmin = () => {
-    localStorage.removeItem("user");
-    localStorage.removeItem("useremail");
+    localStorage.removeItem("username");
+    localStorage.removeItem("email");
     localStorage.removeItem("token");
     window.location.reload();
   };
@@ -157,13 +157,15 @@ const Admin = () => {
      }
      if(data.status==="ok"){
          localStorage.setItem("token",data.token)
-         localStorage.setItem("user",data.userData.username)
-         localStorage.setItem("useremail",data.userData.email)
+         localStorage.setItem("username",data.userData.username)
+         localStorage.setItem("email",data.userData.email)
          setloading(false)
+        //  window.location.reload()
          toast.success("Login successfully")
+         
       }
    } catch (error) {
-    toast.error("This link is not found or broken");
+    toast.error(`${error}`);
     console.log(error)
     setloading(false);
    }

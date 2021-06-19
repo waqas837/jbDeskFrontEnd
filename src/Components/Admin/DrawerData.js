@@ -56,12 +56,12 @@ const DrawerData = ({ opendrawer, setopendrawer}) => {
             </ListItemIcon>
             <ListItemText primary="Users" />
           </ListItem>
-          {/* Blog */}
-          <ListItem button  onClick={()=>history.push("/admin/services")}> 
+           {/* Add a job */}
+           <ListItem button onClick={()=>history.push("/admin/jobs")}> 
             <ListItemIcon>
               <MarkunreadMailbox />
             </ListItemIcon>
-            <ListItemText primary="Services" />
+            <ListItemText primary="Jobs" />
           </ListItem>
           {/* Contact */}
           <ListItem button>

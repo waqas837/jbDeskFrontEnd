@@ -16,6 +16,7 @@ import JobSingle from './Components/Jobs/JobSingle';
 import AllJobs from './Components/Jobs/AllJobs';
 import Navbar from './Components/Reuseables/Navbar';
 import Footer from './Components/Reuseables/Footer';
+import Jobs from "./Components/Admin/Jobs"
 const App = () => {
    return (
       <ThemeProvider theme={theme}>
@@ -57,7 +58,9 @@ const App = () => {
              <Route exact path="/admin/users">
                <Users/>
              </Route>
-
+             <Route exact path="/admin/jobs">
+               <Jobs/>
+             </Route>
           </Router>
        </ThemeProvider>
    );

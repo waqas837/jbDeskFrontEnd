@@ -1,4 +1,5 @@
-import React, { useState,useEffect } from 'react';
+import React, { useState } from 'react';
+import jwt from "jsonwebtoken"
 import {
    Button,
    Grid,
@@ -49,8 +50,10 @@ const CompanyDashboard = () => {
    const styleProps = {
       theme,
    };
-   const company = localStorage.getItem("user")
-   const companyemail = localStorage.getItem("useremail")
+   const token = localStorage.getItem("token");
+   const user = localStorage.getItem("email");
+   const name = localStorage.getItem("username");
+   const decode = jwt.decode(token)
    
    const [openlogin,setopenlogin] = useState(true)
    const classes = Styles(styleProps);
@@ -63,7 +66,7 @@ const CompanyDashboard = () => {
 
    return (
       <>
-      {company?null:<CompanyLogin openlogin={openlogin} setopenlogin={setopenlogin}/>}
+      {user!==null && user===decode.email?null:<CompanyLogin openlogin={openlogin} setopenlogin={setopenlogin}/>}
          <Grid
             container
             spacing={4}
@@ -86,8 +89,8 @@ const CompanyDashboard = () => {
                         alt='Profile Picture'
                      />
                      <div>
-                        <p>{companyemail}</p>
-                        <p className={classes.Txt2}>{company}</p>
+                        <p>{name}</p>
+                        <p className={classes.Txt2}>{user}</p>
                      </div>
                      <div className={classes.ProfileDetails}>
                         <div

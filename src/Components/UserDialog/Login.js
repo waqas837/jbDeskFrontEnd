@@ -15,14 +15,15 @@ const Login = ({openlogin,setopenlogin}) => {
         setloading(true)
 try {
    const {data} = await axios.post(`${url}/login`,state)
-   console.log(data.token)
+   console.log(data)
    if(data.err){
   toast.error("Invalid email/password")
   setloading(false)
    }
    if(data.status==="ok"){
        localStorage.setItem("token",data.token)
-       localStorage.setItem("user",data.userData.username)
+       localStorage.setItem("email",data.userData.email)
+       localStorage.setItem("username",data.userData.username)
        setloading(false)
        toast.success("Login successfully")
        setopenlogin(false)

@@ -2,6 +2,7 @@ import React, { useState,useEffect } from 'react';
 import SearchBar from 'material-ui-search-bar';
 import {NavLink,useHistory} from "react-router-dom"
 import {Menu,MenuItem,Paper,Popper} from '@material-ui/core';
+import jwt from "jsonwebtoken"
 import {
    AppBar,
    Toolbar,
@@ -27,7 +28,10 @@ import Login from "../UserDialog/Login"
 //  border-bottom: 1px solid #F2396E;
 
 const Navbar = (props) => {
-   const user = localStorage.getItem("user");
+    
+   const token = localStorage.getItem("token");
+   const user = localStorage.getItem("email");
+   const decode = jwt.decode(token)
    const theme = useTheme();
    const { location } = props;
 
@@ -53,7 +57,8 @@ const Navbar = (props) => {
      setAnchorEl(null);
    };
 const logout = () =>{
-   localStorage.removeItem("user");
+   localStorage.removeItem("username");
+   localStorage.removeItem("email");
    localStorage.removeItem("token")
    window.location.reload();
 }
@@ -218,7 +223,7 @@ const logout = () =>{
                </div>
                <div className={classes.ProfileBox}>
                   <div>
-                    {user?<Button
+                    {user!==null && user===decode.email?<Button
                       style={{borderRadius:"0px"}}
                       onClick={logout}
                       color="secondary"

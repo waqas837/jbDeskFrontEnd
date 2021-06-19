@@ -45,9 +45,7 @@ async function AdminSUp(e) {
       //here is the error to check whether response data is coming
       //handle this one
       //  setdupUser(data.driver)
-      if (data.passerr) {
-        toast.error("Password and confirm password must be same");
-      }
+      
       if (data.code) {
         toast.error("User already exists try different one");
       }
