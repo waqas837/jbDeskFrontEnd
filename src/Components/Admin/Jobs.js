@@ -738,7 +738,7 @@ const Jobs = () => {
                   style={{ fontWeight: "bolder", color: "whitesmoke" }}
                   align="center"
                 >
-                  Location
+                  Actions
                 </TableCell>
               </TableRow>
             </TableHead>
