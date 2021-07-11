@@ -23,7 +23,7 @@ try {
    if(data.status==="ok"){
        localStorage.setItem("token",data.token)
        localStorage.setItem("email",data.userData.email)
-       localStorage.setItem("username",data.userData.username)
+       localStorage.setItem("user",data.userData.username)
        setloading(false)
        toast.success("Login successfully")
        setopenlogin(false)

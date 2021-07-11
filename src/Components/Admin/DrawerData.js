@@ -43,7 +43,7 @@ const DrawerData = ({ opendrawer, setopendrawer}) => {
           </ListItem>
           <Divider />
           {/* Home */}
-          <ListItem button>
+          <ListItem button onClick={()=>history.push("/")}>
             <ListItemIcon>
               <Home />
             </ListItemIcon>

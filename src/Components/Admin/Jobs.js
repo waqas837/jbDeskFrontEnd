@@ -1,10 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { grey } from "@material-ui/core/colors";
 import { imgurl } from "../../Api/Url";
-import {
-  AddOutlined,
-  Menu,
-} from "@material-ui/icons";
+import { AddOutlined, Menu } from "@material-ui/icons";
 import { useHistory } from "react-router-dom";
 import { BeatLoader, ClipLoader } from "react-spinners";
 import axios from "axios";
@@ -83,6 +80,8 @@ const useStyles = makeStyles((theme) => ({
 const Jobs = () => {
   const classes = useStyles();
   const history = useHistory();
+  const [update, setupdate] = useState([]);
+  const [updatejob, setupdatejob] = useState([]);
   useEffect(() => {
     getJobSingle();
   }, []);
@@ -92,20 +91,47 @@ const Jobs = () => {
   const [opentwo, setOpentwo] = useState(false);
   const [openthree, setOpenthree] = useState(false);
   // this is for add hotel manager
-  const [openfour, setopenfour] = useState(false);
+
   const [id, setid] = useState();
-  const [update, setupdate] = useState();
-  const [emailpattern, setemailpattern] = useState(true);
   const [opendrawer, setopendrawer] = useState(false);
   const [file, setfile] = useState({});
   const [editload, seteditload] = useState(false);
   const user = localStorage.getItem("user");
   const token = localStorage.getItem("token");
-
+  //update logo
+  //file onchange
+  const fileChange = (e) => {
+    setfile(e.target.files[0]);
+  };
+  //upload image
+  const uploadImg = async (e) => {
+    e.preventDefault();
+    var fData = new FormData();
+    fData.append("image", file);
+    console.log(file);
+    if (file.length === 0) {
+      toast.error("Please select an image");
+    }
+    try {
+      const { data } = await axios.put(
+        `${url}/logoupdate/${update._id}`,
+        fData
+      );
+      console.log(data);
+      if (data.success) {
+        toast.success("Image Upload successfully");
+        window.location.reload();
+      }
+    } catch (error) {
+      toast.error("Failed to upload");
+      console.log(error);
+    }
+  };
   //now we pass the headers every request for autheticate the user
   const headers = {
     authorization: `Bearer ${token}`,
   };
+  console.log(updatejob);
   //we set file name in a state
   const onChangeFile = async (e) => {
     e.preventDefault();
@@ -155,7 +181,37 @@ const Jobs = () => {
       toast.error(`${error}`);
     }
   }
-  console.log(stateS);
+  console.log(update);
+  // add a new user/onsubmit form
+  async function updatesinglejob(e, myid) {
+    e.preventDefault();
+    try {
+      setloadingS(true);
+      // if (stateS.email === undefined) {
+      //   toast.error("Don't left any field empty");
+      // }
+      const { data } = await axios.patch(
+        `${url}/updateSingleJob/${myid}`,
+        updatejob,
+        { headers }
+      );
+      console.log(data);
+      setloadingS(false);
+      //here is the error to check whether response data is coming
+      //handle this one
+      //  setdupUser(data.driver)
+      if (!data.errors && !data.passerr && !data.code) {
+        localStorage.setItem("user", data);
+        setloadingS(false);
+        toast.success("Data updated");
+        history.push(`/admin/logoupdate/${update._id}`);
+      }
+    } catch (error) {
+      console.log(error);
+      setloadingS(false);
+      toast.error(`${error}`);
+    }
+  }
   // getall data
   const [loadingtable, setloadingtable] = useState(null);
   //notice that data which is coming from the backend is always inside an object
@@ -178,41 +234,26 @@ const Jobs = () => {
   function handleCloseTwo() {
     setOpentwo(false);
   }
-  async function edit(id) {
+  async function edit(findID) {
     setOpentwo(true);
     seteditload(true);
     setid(id);
-    const { data } = await axios.get(`${url}/findSingleUser/${id}`, {
+    const { data } = await axios.get(`${url}/findSingleJob/${findID}`, {
       headers,
     });
     // console.log(data.data);
-    const totalData = data.results;
-    setupdate(totalData);
+
+    console.log(data);
+    setupdate(data.data);
     seteditload(false);
   }
-  // UPDATE User
-  async function updateUser() {
-    try {
-      setloadingS(true);
-      const { data } = await axios.put(`${url}/udpateUser/${id}`, stateS, {
-        headers,
-      });
-      const userConfirmed = data.results;
-      setloadingS(false);
-      if (userConfirmed) {
-        toast.success("User updated succeed");
-        setloadingS(false);
-        window.location.reload();
-      }
-    } catch (error) {
-      console.log(error);
-    }
-  }
 
-  //DELETE USER
+  //DELETE single job
   async function delet(id) {
-    const { data } = await axios.delete(`${url}/deleteUser/${id}`, { headers });
-    console.log(data);
+    const { data } = await axios.delete(`${url}/deleteAsingleJob/${id}`, {
+      headers,
+    });
+    // console.log(data);
     if (data.success) {
       toast.success("User deleted");
       window.location.reload();
@@ -467,7 +508,6 @@ const Jobs = () => {
                       required="true"
                     />
                   </Grid>
-                  
                 </Grid>
                 <br />
 
@@ -519,7 +559,7 @@ const Jobs = () => {
                 color="secondary"
                 style={{ textAlign: "left" }}
               >
-                Register
+                Update Job
               </Typography>
               <Box style={{ marginLeft: "300px", marginTop: "-35px" }}>
                 <IconButton
@@ -534,7 +574,6 @@ const Jobs = () => {
         </DialogTitle>
         <DialogContentText>
           <Divider />
-
           <Container>
             <Box mt={1} textAlign="center">
               <br />
@@ -548,12 +587,11 @@ const Jobs = () => {
                   ) : (
                     <Input
                       onChange={(e) =>
-                        setstateS({ ...stateS, email: e.target.value })
+                        setupdatejob({ ...updatejob, jobtitle: e.target.value })
                       }
-                      type="email"
-                      placeholder="Update User Email"
+                      placeholder="Update jobtitle"
                       style={{ marginBottom: "10px" }}
-                      defaultValue={update.email}
+                      defaultValue={update.jobtitle}
                       required="true"
                     />
                   )}
@@ -563,20 +601,221 @@ const Jobs = () => {
                   ) : (
                     <Input
                       onChange={(e) =>
-                        setstateS({ ...stateS, password: e.target.value })
+                        setupdatejob({ ...updatejob, category: e.target.value })
                       }
-                      type="password"
-                      placeholder="Update Password"
+                      placeholder="Update category"
                       style={{ marginBottom: "10px" }}
-                      defaultValue={update.password}
+                      defaultValue={update.category}
                       required="true"
                     />
                   )}
+                  <br />
+                  {editload ? (
+                    <span>wait...</span>
+                  ) : (
+                    <Input
+                      onChange={(e) =>
+                        setupdatejob({
+                          ...updatejob,
+                          companyname: e.target.value,
+                        })
+                      }
+                      placeholder="Update companyname"
+                      style={{ marginBottom: "10px" }}
+                      defaultValue={update.companyname}
+                      required="true"
+                    />
+                  )}
+                  <br />
+                  {editload ? (
+                    <span>wait...</span>
+                  ) : (
+                    <Input
+                      onChange={(e) =>
+                        setupdatejob({
+                          ...updatejob,
+                          experience: e.target.value,
+                        })
+                      }
+                      placeholder="Update experience"
+                      style={{ marginBottom: "10px" }}
+                      defaultValue={update.experience}
+                      required="true"
+                    />
+                  )}
+
+                  <br />
+                  {editload ? (
+                    <span>wait...</span>
+                  ) : (
+                    <Input
+                      onChange={(e) =>
+                        setupdatejob({ ...updatejob, salary: e.target.value })
+                      }
+                      placeholder="Update salary"
+                      style={{ marginBottom: "10px" }}
+                      defaultValue={update.salary}
+                      required="true"
+                    />
+                  )}
+                  <br />
+                  {editload ? (
+                    <span>wait...</span>
+                  ) : (
+                    <Input
+                      onChange={(e) =>
+                        setupdatejob({ ...updatejob, time: e.target.value })
+                      }
+                      placeholder="Update time"
+                      style={{ marginBottom: "10px" }}
+                      defaultValue={update.time}
+                      required="true"
+                    />
+                  )}
+                  <br />
+                  {editload ? (
+                    <span>wait...</span>
+                  ) : (
+                    <Input
+                      onChange={(e) =>
+                        setupdatejob({ ...updatejob, totalhrs: e.target.value })
+                      }
+                      placeholder="Update totalhrs"
+                      style={{ marginBottom: "10px" }}
+                      defaultValue={update.totalhrs}
+                      required="true"
+                    />
+                  )}
+                  <br />
+                  {editload ? (
+                    <span>wait...</span>
+                  ) : (
+                    <Input
+                      onChange={(e) =>
+                        setupdatejob({
+                          ...updatejob,
+                          workinghours: e.target.value,
+                        })
+                      }
+                      placeholder="Update workinghours"
+                      style={{ marginBottom: "10px" }}
+                      defaultValue={update.workinghours}
+                      required="true"
+                    />
+                  )}
+                  <br />
+
+                  {editload ? (
+                    <span>wait...</span>
+                  ) : (
+                    <Input
+                      onChange={(e) =>
+                        setupdatejob({
+                          ...updatejob,
+                          minimumqulification: e.target.value,
+                        })
+                      }
+                      placeholder="Update minimum qulification"
+                      style={{ marginBottom: "10px" }}
+                      defaultValue={update.minimumqulification}
+                      required="true"
+                    />
+                  )}
+                  <br />
+
+                  {editload ? (
+                    <span>wait...</span>
+                  ) : (
+                    <Input
+                      onChange={(e) =>
+                        setupdatejob({ ...updatejob, location: e.target.value })
+                      }
+                      placeholder="Update location"
+                      style={{ marginBottom: "10px" }}
+                      defaultValue={update.location}
+                      required="true"
+                    />
+                  )}
+                  <br />
+                  {editload ? (
+                    <span>wait...</span>
+                  ) : (
+                    <Input
+                      type="date"
+                      onChange={(e) =>
+                        setupdatejob({ ...updatejob, date: e.target.value })
+                      }
+                      placeholder="Update date"
+                      style={{ marginBottom: "10px" }}
+                      defaultValue={update.date}
+                      required="true"
+                    />
+                  )}
+                  <br />
+
+                  {editload ? (
+                    <span>wait...</span>
+                  ) : (
+                    <TextareaAutosize
+                      onChange={(e) =>
+                        setupdatejob({
+                          ...updatejob,
+                          jobdescription: e.target.value,
+                        })
+                      }
+                      placeholder="Update job description"
+                      style={{ marginBottom: "10px" }}
+                      defaultValue={update.jobdescription}
+                      required="true"
+                    />
+                  )}
+                  <br />
+
+                  {editload ? (
+                    <span>wait...</span>
+                  ) : (
+                    <Input
+                      onChange={(e) =>
+                        setupdatejob({ ...update, howtoapply: e.target.value })
+                      }
+                      placeholder="Update how to apply"
+                      style={{ marginBottom: "10px" }}
+                      defaultValue={update.howtoapply}
+                      required="true"
+                    />
+                  )}
+                  <br />
                 </>
               )}
 
+              <img
+                src={`${imgurl}/${update.logo}`}
+                style={{
+                  marginLeft: "150px",
+                  width: "35px",
+                  height: "35px",
+                  borderRadius: "100px",
+                }}
+                alt=""
+              />
               <br />
+              <Box textAlign="left">Update logo:</Box>
+              <form onSubmit={uploadImg} encType="multipart/form-data">
+                <input type="file" name="image" onChange={fileChange} />
+                <br />
+                <Button
+                  onClick={uploadImg}
+                  variant="contained"
+                  size="small"
+                  color="primary"
+                >
+                  Upload
+                </Button>
+              </form>
               <br />
+
+              <br />
+
               {loadingS ? (
                 <Button
                   fullWidth
@@ -588,7 +827,7 @@ const Jobs = () => {
                   color="primary"
                   startIcon={<ClipLoader size="10" color="black" />}
                 >
-                  Adding...
+                  Processing...
                 </Button>
               ) : (
                 <Button
@@ -598,15 +837,16 @@ const Jobs = () => {
                   }}
                   color="secondary"
                   variant="contained"
-                  onClick={updateUser}
+                  onClick={(e) => updatesinglejob(e, update._id)}
                 >
-                  Update User
+                  Update Job
                 </Button>
               )}
             </Box>
           </Container>
         </DialogContentText>
       </Dialog>
+
       <Container>
         <Grid container component={Box} ml={1} mt={3} textAlign="center">
           {/* colomn1 */}
@@ -760,7 +1000,6 @@ const Jobs = () => {
                         style={{
                           width: "50px",
                           height: "50px",
-                          borderRadius: "100px",
                         }}
                       />
                     </TableCell>

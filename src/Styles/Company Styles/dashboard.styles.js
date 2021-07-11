@@ -44,10 +44,10 @@ const styles = makeStyles((styleProps) => ({
          borderLeft: '3px solid #ff3366',
       },
    },
-   NavItemActive: {
-      background: '#f8f8f8',
-      borderLeft: '3px solid #ff3366',
-   },
+   // NavItemActive: {
+   //    background: '#f8f8f8',
+   //    borderLeft: '3px solid #ff3366',
+   // },
    ListItemContent: {
       display: 'flex',
       alignItems: 'center',

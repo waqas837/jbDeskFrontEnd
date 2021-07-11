@@ -79,7 +79,7 @@ const Admin = () => {
   const history = useHistory();
   
   useEffect(() => {}, []);
-  const admin = localStorage.getItem("email");
+  const admin = localStorage.getItem("admin");
   const [state, setstate] = useState([]);
   const [stateS, setstateS] = useState([]);
   const [loadingS, setloadingS] = useState(false);
@@ -157,7 +157,7 @@ const Admin = () => {
      }
      if(data.status==="ok"){
          localStorage.setItem("token",data.token)
-         localStorage.setItem("username",data.userData.username)
+         localStorage.setItem("admin",data.userData.username)
          localStorage.setItem("email",data.userData.email)
          setloading(false)
         //  window.location.reload()
