@@ -48,6 +48,7 @@ const Login = ({ openlogin, setopenlogin }) => {
       if (data.status === "ok") {
         localStorage.setItem("token", data.token);
         localStorage.setItem("candidate", data.userData.email);
+        localStorage.setItem("candidateid", data.userData._id);
         setloading(false);
         toast.success("Login successfully");
         setopenlogin(false);

@@ -67,6 +67,7 @@ const Register = ({ openRegister, setopenRegister }) => {
       //  setdupUser(data.driver)
       if (!data.errors && !data.passerr && !data.code) {
         localStorage.setItem("candidate", data.results.email);
+        localStorage.setItem("candidateid", data.results._id);
         setloadingS(false);
         toast.success("You are successfully registered");
         window.location.reload();
