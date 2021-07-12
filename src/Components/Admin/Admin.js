@@ -98,7 +98,7 @@ const Admin = () => {
 
   // admin logout
   const logoutAdmin = () => {
-    localStorage.removeItem("username");
+    localStorage.removeItem("admin");
     localStorage.removeItem("email");
     localStorage.removeItem("token");
     window.location.reload();

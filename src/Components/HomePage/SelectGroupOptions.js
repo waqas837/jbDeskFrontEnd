@@ -1,8 +1,9 @@
+
 export const locationOptions = [
-   { value: 'konya', label: 'Konya', color: '#5243AA' },
-   { value: 'ankara', label: 'Ankara', color: '#FF5630' },
-   { value: 'istabbul', label: 'Istabbul', color: '#FF8B00' },
-   { value: 'izmir', label: 'Izmir', color: '#FFC400' },
+   { value: 'konya', label: 'Konya' },
+   { value: 'ankara', label: 'Ankara' },
+   { value: 'istabbul', label: 'Istabbul'},
+   { value: 'izmir', label: 'Izmir'},
 ];
 
 export const locationSelect = [
@@ -17,7 +18,19 @@ export const CategoryOptions = [
    { value: 'marketing', label: 'Marketing', color: '#FF8B00' },
    { value: 'education', label: 'Education', color: '#FFC400' },
 ];
+// city options
+export const SkillsOptions = [
+   { value: 'Python', label: 'Python', color: '#5243AA' },
+   { value: 'Laravel', label: 'Laravel', color: '#FF5630' },
+   { value: 'React js, Node js', label: 'React js, Node js', color: '#FF8B00' },
+   { value: 'Go Lang', label: 'Go Lang', color: '#FFC400' },
+   { value: 'Flutter', label: 'Flutter', color: '#FFC400' },
+   { value: 'React Native', label: 'React Native', color: '#FFC400' },
+   { value: 'Java', label: 'Java', color: '#FFC400' },
+   { value: 'Andriod', label: 'Andriod', color: '#FFC400' },
+];
 
+// end city options
 export const CategorySelect = [
    {
       label: 'Category',

@@ -69,6 +69,7 @@ const Navbar = (props) => {
     localStorage.removeItem("user");
     localStorage.removeItem("email");
     localStorage.removeItem("token");
+    localStorage.removeItem("candidate");
     window.location.reload();
   };
   const classes = Styles(styleProps);

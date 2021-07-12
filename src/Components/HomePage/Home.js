@@ -10,7 +10,9 @@ import {
    ListItemText,
    useTheme,
 } from '@material-ui/core';
-import React, { useState } from 'react';
+import cities from "../../cities.json";
+import axios from "axios"
+import React, { useState,useEffect } from 'react';
 import Card from '@material-ui/core/Card';
 import CardActionArea from '@material-ui/core/CardActionArea';
 import CardActions from '@material-ui/core/CardActions';
@@ -27,10 +29,7 @@ import girlImg from '../../Assets/Images/girl.jpg';
 import {
    locationOptions,
    locationSelect,
-   ExperienceOptions,
-   ExperienceSelect,
-   CategoryOptions,
-   CategorySelect,
+   SkillsOptions
 } from './SelectGroupOptions';
 import { Search } from '@material-ui/icons';
 import cImg1 from '../../Assets/Images/jb1.png';
@@ -81,7 +80,15 @@ const Home = (props) => {
       svg6: false,
       svg7: false,
    });
-
+   useEffect(()=>{getCities()},[])
+//get the cities
+const getCities =() =>{
+ try {
+  console.log(cities.map((val)=>val.name));
+ } catch (error) {
+    console.log(error)
+ }
+}
    const classes = makeStyles(styleProps);
 
    return (
@@ -117,45 +124,33 @@ const Home = (props) => {
                         className={classes.FlaticonMap}
                      ></LocationSearchingIcon>
                      <Select
-                        defaultValue={locationOptions[1]}
-                        options={locationSelect}
+                        defaultValue={cities[0]}
+                        options={cities}
+                        label={cities}
                         formatGroupLabel={formatGroupLabel}
                         className={classes.SelectLocation}
                      />
                   </Grid>
-
+                  
+                  {/* skills */}
+                 
                   <Grid
                      item
                      xs={12}
                      sm={8}
                      className={classes.LocationInput}
-                  >
+                  > 
                      <LocationSearchingIcon
                         className={classes.FlaticonMap}
                      ></LocationSearchingIcon>
                      <Select
-                        defaultValue={CategoryOptions[1]}
-                        options={CategorySelect}
+                        defaultValue={SkillsOptions[0]}
+                        options={SkillsOptions}
                         formatGroupLabel={formatGroupLabel}
                         className={classes.SelectLocation}
                      />
                   </Grid>
-                  <Grid
-                     item
-                     xs={12}
-                     sm={4}
-                     className={classes.LocationInput}
-                  >
-                     <LocationSearchingIcon
-                        className={classes.FlaticonMap}
-                     ></LocationSearchingIcon>
-                     <Select
-                        defaultValue={ExperienceOptions[1]}
-                        options={ExperienceSelect}
-                        formatGroupLabel={formatGroupLabel}
-                        className={classes.SelectLocation}
-                     />
-                  </Grid>
+                  {/* end skills */}
                   <Grid item xs={12}>
                      <IconButton
                         variant='contained'
@@ -192,7 +187,7 @@ const Home = (props) => {
                >
                   <div className={classes.Section2Card}>
                      <h3> Laravel </h3>
-                     <img src={cImg1} alt='card image' />
+                     <img src={cImg1} alt='' />
                   </div>
                </Grid>
                <Grid
@@ -204,7 +199,7 @@ const Home = (props) => {
                >
                   <div className={classes.Section2Card}>
                      <h3> WordPress </h3>
-                     <img src={cImg2} alt='card image' />
+                     <img src={cImg2} alt='' />
                   </div>
                </Grid>
                <Grid
@@ -216,7 +211,7 @@ const Home = (props) => {
                >
                   <div className={classes.Section2Card}>
                      <h3> angular js </h3>
-                     <img src={cImg3} alt='card image' />
+                     <img src={cImg3} alt='' />
                   </div>
                </Grid>
                <Grid
@@ -252,7 +247,7 @@ const Home = (props) => {
                >
                   <div className={classes.Section2Card}>
                      <h3> node js </h3>
-                     <img src={cImg6} alt='card image' />
+                     <img src={cImg6} alt='' />
                   </div>
                </Grid>
             </Grid>
