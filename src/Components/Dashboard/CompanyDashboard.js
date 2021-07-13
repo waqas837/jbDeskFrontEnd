@@ -23,6 +23,8 @@ import {
   DialogContentText,
   Input,
   Box,
+  DialogContent,
+  DialogActions,
 } from "@material-ui/core";
 import PersonIcon from "@material-ui/icons/Person";
 import Close from "@material-ui/icons/Close";
@@ -67,13 +69,59 @@ const CompanyDashboard = () => {
   const token = localStorage.getItem("token");
   const user = localStorage.getItem("email");
   const name = localStorage.getItem("username");
+  const candidateid = localStorage.getItem("candidateid");
   const decode = jwt.decode(token);
   const [openlogin, setopenlogin] = useState(true);
   const [openthree, setOpenthree] = useState(false);
+  const [open, setopen] = useState(false);
+  const [loadings, setloadings] = useState(false);
   const [stateS, setstateS] = useState([]);
+  const [searchResults, setsearchResults] = useState([]);
   const [loadingS, setloadingS] = useState(false);
+  const [loading, setloading] = useState(false);
   const [file, setfile] = useState({});
+  // -3>applicantDetails
+  const applicantDetails = async (jobid) => {
+    try {
+      const { data } = await axios.get(`${url}/seeApplicantsDetails/${jobid}`);
+      console.log(data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  //  -2.see applicants
+  const seeApplicants = async () => {
+    setopen(true);
+    setloading(true);
+    try {
+      const { data } = await axios.get(`${url}/seeApplicants/${candidateid}`);
+      setsearchResults(data.results);
+      setloading(false);
+    } catch (error) {
+      console.log(error);
+      setloading(false);
+    }
+  };
+  // approve an application
 
+  //  -1.apply
+  const approve = async (jobid) => {
+    setloadings(true);
+    try {
+      const { data } = await axios.post(`${url}/apply/${jobid}/${candidateid}`);
+      setloadings(false);
+      console.log(data);
+      if (data.success) {
+        toast.success("Successfully applied for this job.Thanks!");
+      }
+      if (data.error) {
+        toast.error(`${data.error}`);
+      }
+    } catch (error) {
+      console.log(error);
+      setloadings(false);
+    }
+  };
   const classes = Styles(styleProps);
   const logout = () => {
     localStorage.removeItem("user");
@@ -457,7 +505,7 @@ const CompanyDashboard = () => {
                   <div>Manage Jobs</div>
                 </div>
               </li>
-              <li className={classes.NavItem}>
+              <li className={classes.NavItem} onClick={seeApplicants}>
                 <div className={classes.ListItemContent}>
                   <div className={classes.ListIcon}>
                     <ResumeIcon />
@@ -1146,6 +1194,77 @@ const CompanyDashboard = () => {
           </Grid>
         </Grid>
       </Grid>
+      <Dialog open={open} onClose={() => setopen(false)}>
+        <DialogTitle style={{ paddingLeft: "150px", paddingRight: "150px" }}>
+          <Typography color="secondary" variant="h5">
+            Applicants
+          </Typography>
+        </DialogTitle>
+        <DialogContent>
+          {loading ? (
+            <Box textAlign="center">Loading... </Box>
+          ) : (
+            searchResults.map((val) => (
+              <Box>
+                <Typography color="primary" variant="body1">
+                  Title:
+                </Typography>
+                <List>{val.jobtitle}</List>
+                <Typography color="primary" variant="body1">
+                  Company Name:
+                </Typography>{" "}
+                <List>{val.companyname}</List>
+                <Typography color="primary" variant="body1">
+                  Experience Required:
+                </Typography>
+                <List>{val.experience}</List>
+                <Typography color="primary" variant="body1">
+                  Salary Expected:
+                </Typography>
+                <List>{val.salary}</List>
+                <Typography color="primary" variant="body1">
+                  Location:
+                </Typography>{" "}
+                <List>{val.location}</List>
+                {loadings ? (
+                  <Button size="small" variant="contained" color="primary">
+                    Approving...
+                  </Button>
+                ) : (
+                  <Button
+                    onClick={() => approve(val._id)}
+                    size="small"
+                    variant="contained"
+                    color="primary"
+                  >
+                    Approve
+                  </Button>
+                )}
+                <Button
+                  onClick={()=>applicantDetails(val._id)}
+                  size="small"
+                  variant="contained"
+                  color="primary"
+                >
+                  See Applicants
+                </Button>
+                <Box mb={2}>
+                  <Divider />
+                </Box>
+              </Box>
+            ))
+          )}
+        </DialogContent>
+        <DialogActions>
+          <Button
+            onClick={() => setopen(false)}
+            size="small"
+            variant="outlined"
+          >
+            Close
+          </Button>
+        </DialogActions>
+      </Dialog>
     </div>
   );
 };
