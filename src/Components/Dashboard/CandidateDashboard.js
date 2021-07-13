@@ -307,7 +307,7 @@ const CandidateDashboard = () => {
                 <Button variant="contained" className={classes.ProfileBtn}>
                   View Profile
                 </Button>
-                <Badge fontSize="large" badgeContent={"new"} color="secondary" style={{cursor:"pointer"}} onClick={candidateNotification}>
+                <Badge fontSize="large" badgeContent={"new"} color="secondary" style={{width:"28px",height:"22px",cursor:"pointer"}} onClick={candidateNotification}>
                 <Notifications color="primary"/>
                 </Badge>
               </div>

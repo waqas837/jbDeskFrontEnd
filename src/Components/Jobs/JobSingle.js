@@ -63,7 +63,7 @@ const SingleJob = () => {
   const classes = Styles(styleProps);
   const { jobId } = useParams();
   return (
-    <>
+    <div>
       <Snackbar
         open={open}
         autoHideDuration={6000}
@@ -563,7 +563,7 @@ const SingleJob = () => {
           </Grid>
         </Grid>
       )}
-    </>
+    </div>
   );
 };
 

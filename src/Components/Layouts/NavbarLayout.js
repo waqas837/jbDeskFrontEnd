@@ -11,11 +11,11 @@ const NavbarLayout = ({
 }) => {
    console.log('Path', Path);
    return (
-      <>
+      <div>
          <Navbar />
            <Home/>
           <Footer />
-      </>
+      </div>
    );
 };
 

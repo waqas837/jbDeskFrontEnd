@@ -223,7 +223,7 @@ const Managejobs = (props) => {
               {update === undefined ? (
                 <ClipLoader />
               ) : (
-                <>
+                <div>
                   {editload ? (
                     <span>wait...</span>
                   ) : (
@@ -427,7 +427,7 @@ const Managejobs = (props) => {
                     />
                   )}
                   <br />
-                </>
+                </div>
               )}
               <img
                 src={`${imgurl}/${update.logo}`}

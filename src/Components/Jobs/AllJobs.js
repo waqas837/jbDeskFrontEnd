@@ -75,7 +75,7 @@ const AllJobs = (props) => {
    const error =
       [gilad, jason, antoine].filter((v) => v).length !== 2;
    return (
-      <>
+      <div>
          <PageHeader
             title={'Job Listing'}
             pathName={'Job Listing'}
@@ -405,7 +405,7 @@ const AllJobs = (props) => {
                </Grid>
             </Grid>
          </Grid>
-      </>
+      </div>
    );
 };
 

@@ -581,7 +581,7 @@ const Jobs = () => {
               {update === undefined ? (
                 <ClipLoader />
               ) : (
-                <>
+                <div>
                   {editload ? (
                     <span>wait...</span>
                   ) : (
@@ -785,7 +785,7 @@ const Jobs = () => {
                     />
                   )}
                   <br />
-                </>
+                </div>
               )}
 
               <img

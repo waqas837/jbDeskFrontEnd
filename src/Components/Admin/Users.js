@@ -368,7 +368,7 @@ const Users = () => {
               {update === undefined ? (
                 <ClipLoader />
               ) : (
-                <>
+                <div>
                   {editload ? (
                     <span>wait...</span>
                   ) : (
@@ -398,7 +398,7 @@ const Users = () => {
                       required="true"
                     />
                   )}
-                </>
+                </div>
               )}
 
               <br />

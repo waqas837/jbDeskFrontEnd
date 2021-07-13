@@ -79,7 +79,7 @@ const Navbar = (props) => {
   };
 
   return (
-    <>
+    <div>
       <Login openlogin={openlogin} setopenlogin={setopenlogin} />
 
       <AppBar position="static" color="transparent" className={classes.AppBar}>
@@ -410,7 +410,7 @@ const Navbar = (props) => {
           />
         </div>
       </Drawer>
-    </>
+    </div>
   );
 };
 

@@ -399,7 +399,7 @@ const Admin = () => {
               {update === undefined ? (
                 {/* <ClipLoader /> */}
               ) : (
-                <>
+                <div>
                   <Input
                     onChange={(e) =>
                       setstateS({ ...stateS, email: e.target.value })
@@ -430,7 +430,7 @@ const Admin = () => {
                     type="password"
                     placeholder="Update Confirm Password"
                   />
-                </>
+                </div>
               )}
 
               <br />
