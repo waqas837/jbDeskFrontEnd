@@ -77,14 +77,30 @@ const CompanyDashboard = () => {
   const [loadings, setloadings] = useState(false);
   const [stateS, setstateS] = useState([]);
   const [searchResults, setsearchResults] = useState([]);
+  const [applicantsdata, setapplicantsdata] = useState([]);
+  const [applicantsprofile, setapplicantsprofile] = useState([]);
   const [loadingS, setloadingS] = useState(false);
   const [loading, setloading] = useState(false);
+  const [openapplicants, setopenapplicants] = useState(false);
   const [file, setfile] = useState({});
+  const [jobsid, setjobsid] = useState([]);
   // -3>applicantDetails
   const applicantDetails = async (jobid) => {
+    setjobsid(jobid)
     try {
+      setopenapplicants(true);
       const { data } = await axios.get(`${url}/seeApplicantsDetails/${jobid}`);
-      console.log(data);
+      console.log(data.results);
+      setapplicantsdata(
+        data.results.map((val) =>
+          val.candidates.map((val) => val.candidate.email)
+        )
+      );
+      setapplicantsprofile(
+        data.results.map((val) =>
+          val.candidates.map((val) => val.candidate.profile)
+        )
+      );
     } catch (error) {
       console.log(error);
     }
@@ -102,17 +118,16 @@ const CompanyDashboard = () => {
       setloading(false);
     }
   };
-  // approve an application
+  //last. approve an application
 
-  //  -1.apply
-  const approve = async (jobid) => {
+  const approve = async () => {
     setloadings(true);
     try {
-      const { data } = await axios.post(`${url}/apply/${jobid}/${candidateid}`);
+      const { data } = await axios.post(`${url}/approve/${jobsid}/${candidateid}`);
       setloadings(false);
       console.log(data);
       if (data.success) {
-        toast.success("Successfully applied for this job.Thanks!");
+        toast.success("You approved this person to this!");
       }
       if (data.error) {
         toast.error(`${data.error}`);
@@ -1197,7 +1212,7 @@ const CompanyDashboard = () => {
       <Dialog open={open} onClose={() => setopen(false)}>
         <DialogTitle style={{ paddingLeft: "150px", paddingRight: "150px" }}>
           <Typography color="secondary" variant="h5">
-            Applicants
+            People applied these jobs
           </Typography>
         </DialogTitle>
         <DialogContent>
@@ -1226,22 +1241,8 @@ const CompanyDashboard = () => {
                   Location:
                 </Typography>{" "}
                 <List>{val.location}</List>
-                {loadings ? (
-                  <Button size="small" variant="contained" color="primary">
-                    Approving...
-                  </Button>
-                ) : (
-                  <Button
-                    onClick={() => approve(val._id)}
-                    size="small"
-                    variant="contained"
-                    color="primary"
-                  >
-                    Approve
-                  </Button>
-                )}
                 <Button
-                  onClick={()=>applicantDetails(val._id)}
+                  onClick={() => applicantDetails(val._id)}
                   size="small"
                   variant="contained"
                   color="primary"
@@ -1258,6 +1259,58 @@ const CompanyDashboard = () => {
         <DialogActions>
           <Button
             onClick={() => setopen(false)}
+            size="small"
+            variant="outlined"
+          >
+            Close
+          </Button>
+        </DialogActions>
+      </Dialog>
+      {/* see candidate application details */}
+      <Dialog open={openapplicants} onClose={() => setopenapplicants(false)}>
+        <DialogTitle style={{ paddingLeft: "100px", paddingRight: "100px" }}>
+          Applicants
+        </DialogTitle>
+        <DialogContent>
+          {applicantsdata.map((val) => val)}
+          <img
+            src={`${imgurl}/${applicantsprofile.map((val) => val)}`}
+            width="70px"
+            height="70px"
+            // style={{ borderRadius: "100px" }}
+            alt=""
+          />
+          {loadings ? (
+            <div>
+              {" "}
+              <Button
+                size="small"
+                style={{ fontSize: "10px", marginTop: "4px" }}
+                variant="contained"
+                color="primary"
+              >
+                Approving...
+              </Button>
+              <Divider />
+            </div>
+          ) : (
+            <div>
+              <Button
+                onClick={approve}
+                size="small"
+                variant="contained"
+                color="primary"
+                style={{ fontSize: "10px", marginTop: "4px" }}
+              >
+                Approve
+              </Button>
+              <Divider />
+            </div>
+          )}
+        </DialogContent>
+        <DialogActions>
+          <Button
+            onClick={() => setopenapplicants(false)}
             size="small"
             variant="outlined"
           >

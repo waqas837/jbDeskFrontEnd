@@ -5,7 +5,8 @@ import Register from "../CandidateDialogs/Register";
 import { useStyles } from "../../Styles/LoginDialog/LoginDialog.styles";
 import {
   Button,
-  Grid,DialogContentText,
+  Grid,
+  DialogContentText,
   List,
   ListItem,
   ListItemAvatar,
@@ -16,7 +17,10 @@ import {
   DialogActions,
   DialogContent,
   DialogTitle,
-  Box, Typography,Divider,Container
+  Box,
+  Typography,
+  Divider,
+  Container,Badge
 } from "@material-ui/core";
 
 import Styles from "../../Styles/Candidate Styles/dashboard.styles";
@@ -35,6 +39,7 @@ import {
   Info as InfoIco,
   Public as PublicIcon,
   ChevronLeft as LeftIcon,
+  Notifications
 } from "@material-ui/icons/";
 import {
   Edit,
@@ -42,14 +47,10 @@ import {
   Trash2,
   Twitter,
   Linkedin,
-  Briefcase,
+  Briefcase
 } from "react-feather";
 import axios from "axios";
 import { imgurl, url } from "../../Api/Url";
-const logout = () => {
-  localStorage.removeItem("candidate");
-  window.location.reload();
-};
 
 const CandidateDashboard = () => {
   const theme = useTheme();
@@ -63,8 +64,40 @@ const CandidateDashboard = () => {
   const [state, setstate] = useState("");
   const [openRegister, setopenRegister] = useState(false);
   const [loading, setloading] = useState(false);
+  const [open, setopen] = useState(false);
   const [test, settest] = useState([]);
-
+  const [category, setcategory] = useState("");
+  const [jobtitile, setjobtitile] = useState("");
+  const [company, setcompany] = useState("");
+  const logout = () => {
+    localStorage.removeItem("candidate");
+    window.location.reload();
+  };
+  const candidateid = localStorage.getItem("candidateid");
+  //candidate notification
+  const candidateNotification = async () => {
+    try {
+      setopen(true);
+      const { data } = await axios.get(
+        `${url}/notificationsForApprovedJobs/${candidateid}`
+      );
+      const catogory = data.results.map((val) =>
+        val.approved.map((val) => val.jobid.category)
+      );
+      const jobtitle = data.results.map((val) =>
+        val.approved.map((val) => val.jobid.jobtitle)
+      );
+      const companyname = data.results.map((val) =>
+        val.approved.map((val) => val.jobid.companyname)
+      );
+      setcategory(catogory);
+      setjobtitile(jobtitle);
+      setcompany(companyname);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  console.log(category);
   // get the cv data
   const getcvdata = async () => {
     setcvopen(true);
@@ -274,6 +307,9 @@ const CandidateDashboard = () => {
                 <Button variant="contained" className={classes.ProfileBtn}>
                   View Profile
                 </Button>
+                <Badge fontSize="large" badgeContent={"new"} color="secondary" style={{cursor:"pointer"}} onClick={candidateNotification}>
+                <Notifications color="primary"/>
+                </Badge>
               </div>
             </Grid>
             <Grid item md={6} xs={12} className={classes.Section2}>
@@ -528,151 +564,186 @@ const CandidateDashboard = () => {
         </Grid>
       </Grid>
 
-
-
       {/* CV Perviewer ,Ok let design it*/}
- 
-       <Dialog fullScreen open={cvopen}>
-<DialogTitle>
-<Container>
-       <Box style={{border:"2px dotted green"}}>
-        <Grid container>
-            <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
-              {
-                loading?<p>loading..</p>:<Box textAlign="center" p={3}>
-              <Typography
-                variant="h4"
-                color="secondary"
-              >
-              Your CV
-              </Typography>
-              </Box>
-              }
 
-            </Grid>
-          </Grid>
-          {/* 2 grid */}
-          <Grid container>
-          {/* first row,first item */}
-            <Grid item xs={3} sm={3} md={3}>
-           <Typography variant="h5" color="primary">{test.map((val)=>val.institute)}</Typography>
-            </Grid>
-            {/* first row,second item */}
-            <Grid item xs={5} sm={5} md={5}>
-         <Box textAlign="right"> <Typography  variant="subtitle2">
-         Name:{test.map((val)=>val.fullname)} <br />
-         Email:{test.map((val)=>val.email)}<br />
-         Address:{test.map((val)=>val.address)}<br />
-         Phone:{test.map((val)=>val.phone)}<br />
-       
-         </Typography></Box>
-        
-            </Grid>
-          
-           
-          </Grid>
-          <Divider/>
-          {/* 2rd line */}
-    
-          <Grid container>
-          {/* first row,first item */}
-            <Grid item xs={3} sm={3} md={3}>
-           <Typography variant="h5" color="primary">Objective</Typography>
-            </Grid>
-            {/* first row,second item */}
-            <Grid item xs={5} sm={5} md={5}>
-         <Box textAlign="right"> <Typography  variant="subtitle2">
-         Objective:<br />{test.map((val)=>val.object)}
-         
-         </Typography></Box>
-        
-            </Grid>
-            <Divider/>
-           
-          </Grid>
-          <Divider/>
-        {/* 3rd line */}
-        <Grid container>
-          {/* first row,first item */}
-            <Grid item xs={3} sm={3} md={3}>
-           <Typography variant="h5" color="primary">Work Experience</Typography>
-           {test.map((val)=>val.company)} &nbsp;
-           {test.map((val)=>val.location)} <br />
-           {test.map((val)=>val.startdate)} &nbsp;
-           {test.map((val)=>val.enddate)}
-            </Grid>
-            {/* first row,second item */}
-            <Grid item xs={5} sm={5} md={5}>
-         <Box textAlign="right"> <Typography  variant="subtitle2">
-         Position:<br />
-         
-         </Typography></Box>
-        
-            </Grid>
-            <Divider/>
-           
-          </Grid>
-          {/* 4th line */}
-    
-          <Divider/>
-        <Grid container>
-          {/* first row,first item */}
-            <Grid item xs={3} sm={3} md={3}>
-           <Typography variant="h5" color="primary">Education</Typography>
-           {test.map((val)=>val.degree)} &nbsp;
-           {test.map((val)=>val.institute)}  <br />
-            &nbsp;
-            {test.map((val)=>val.degreedated)}
-            </Grid>
-           
-            {/* first row,second item */}
-            <Grid item xs={5} sm={5} md={5}>
-         <Box textAlign="right"> <Typography  variant="subtitle2">
-         Position:<br />{test.map((val)=>val.position)}
-         
-         </Typography></Box>
-        
-            </Grid>
-            <Divider/>
-           
-          </Grid>
-          {/* last line */}
-    
-           <Divider/>
-        <Grid container>
-          {/* first row,first item */}
-            <Grid item xs={3} sm={3} md={3}>
-           <Typography variant="h5" color="primary">Skills</Typography>
-           {test.map((val)=>val.degree)} &nbsp;
-           {test.map((val)=>val.institute)}  <br />
-            &nbsp;
-            {test.map((val)=>val.degreedated)} 
-            </Grid>
-           
-            {/* first row,second item */}
-            <Grid item xs={5} sm={5} md={5}>
-         <Box textAlign="right"> <Typography  variant="subtitle2">
-         Position:<br />
-         {test.map((val)=>val.object)}
-         </Typography></Box>
-        
-            </Grid>
-            <Divider/>
-           
-          </Grid>
-        </Box>
-       </Container>
-       
-        
-        
-</DialogTitle>
-<DialogActions><Button size="small"
- color="secondary" 
- variant="contained"
- onClick={()=>setcvopen(false)}>
- Close</Button>
- </DialogActions>
-  </Dialog>
+      <Dialog fullScreen open={cvopen}>
+        <DialogTitle>
+          <Container>
+            <Box style={{ border: "2px dotted green" }}>
+              <Grid container>
+                <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
+                  {loading ? (
+                    <p>loading..</p>
+                  ) : (
+                    <Box textAlign="center" p={3}>
+                      <Typography variant="h4" color="secondary">
+                        Your CV
+                      </Typography>
+                    </Box>
+                  )}
+                </Grid>
+              </Grid>
+              {/* 2 grid */}
+              <Grid container>
+                {/* first row,first item */}
+                <Grid item xs={3} sm={3} md={3}>
+                  <Typography variant="h5" color="primary">
+                    {test.map((val) => val.institute)}
+                  </Typography>
+                </Grid>
+                {/* first row,second item */}
+                <Grid item xs={5} sm={5} md={5}>
+                  <Box textAlign="right">
+                    {" "}
+                    <Typography variant="subtitle2">
+                      Name:{test.map((val) => val.fullname)} <br />
+                      Email:{test.map((val) => val.email)}
+                      <br />
+                      Address:{test.map((val) => val.address)}
+                      <br />
+                      Phone:{test.map((val) => val.phone)}
+                      <br />
+                    </Typography>
+                  </Box>
+                </Grid>
+              </Grid>
+              <Divider />
+              {/* 2rd line */}
+
+              <Grid container>
+                {/* first row,first item */}
+                <Grid item xs={3} sm={3} md={3}>
+                  <Typography variant="h5" color="primary">
+                    Objective
+                  </Typography>
+                </Grid>
+                {/* first row,second item */}
+                <Grid item xs={5} sm={5} md={5}>
+                  <Box textAlign="right">
+                    {" "}
+                    <Typography variant="subtitle2">
+                      Objective:
+                      <br />
+                      {test.map((val) => val.object)}
+                    </Typography>
+                  </Box>
+                </Grid>
+                <Divider />
+              </Grid>
+              <Divider />
+              {/* 3rd line */}
+              <Grid container>
+                {/* first row,first item */}
+                <Grid item xs={3} sm={3} md={3}>
+                  <Typography variant="h5" color="primary">
+                    Work Experience
+                  </Typography>
+                  {test.map((val) => val.company)} &nbsp;
+                  {test.map((val) => val.location)} <br />
+                  {test.map((val) => val.startdate)} &nbsp;
+                  {test.map((val) => val.enddate)}
+                </Grid>
+                {/* first row,second item */}
+                <Grid item xs={5} sm={5} md={5}>
+                  <Box textAlign="right">
+                    {" "}
+                    <Typography variant="subtitle2">
+                      Position:
+                      <br />
+                    </Typography>
+                  </Box>
+                </Grid>
+                <Divider />
+              </Grid>
+              {/* 4th line */}
+
+              <Divider />
+              <Grid container>
+                {/* first row,first item */}
+                <Grid item xs={3} sm={3} md={3}>
+                  <Typography variant="h5" color="primary">
+                    Education
+                  </Typography>
+                  {test.map((val) => val.degree)} &nbsp;
+                  {test.map((val) => val.institute)} <br />
+                  &nbsp;
+                  {test.map((val) => val.degreedated)}
+                </Grid>
+
+                {/* first row,second item */}
+                <Grid item xs={5} sm={5} md={5}>
+                  <Box textAlign="right">
+                    {" "}
+                    <Typography variant="subtitle2">
+                      Position:
+                      <br />
+                      {test.map((val) => val.position)}
+                    </Typography>
+                  </Box>
+                </Grid>
+                <Divider />
+              </Grid>
+              {/* last line */}
+
+              <Divider />
+              <Grid container>
+                {/* first row,first item */}
+                <Grid item xs={3} sm={3} md={3}>
+                  <Typography variant="h5" color="primary">
+                    Skills
+                  </Typography>
+                  {test.map((val) => val.degree)} &nbsp;
+                  {test.map((val) => val.institute)} <br />
+                  &nbsp;
+                  {test.map((val) => val.degreedated)}
+                </Grid>
+
+                {/* first row,second item */}
+                <Grid item xs={5} sm={5} md={5}>
+                  <Box textAlign="right">
+                    {" "}
+                    <Typography variant="subtitle2">
+                      Position:
+                      <br />
+                      {test.map((val) => val.object)}
+                    </Typography>
+                  </Box>
+                </Grid>
+                <Divider />
+              </Grid>
+            </Box>
+          </Container>
+        </DialogTitle>
+        <DialogActions>
+          <Button
+            size="small"
+            color="secondary"
+            variant="contained"
+            onClick={() => setcvopen(false)}
+          >
+            Close
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      {/* notifications */}
+      <Dialog open={open} onClose={() => setopen(false)}>
+        <DialogTitle></DialogTitle>
+        <DialogContent>
+          You have applied as {jobtitile} develpor in field of {category} in{" "}
+          {company}.Your job was approved{" "}
+        </DialogContent>
+        <DialogActions>
+          <Button
+            onClick={() => setopen(false)}
+            variant="outlined"
+            size="small"
+            color="secondary"
+          >
+            Close
+          </Button>
+        </DialogActions>
+      </Dialog>
     </div>
   );
 };
