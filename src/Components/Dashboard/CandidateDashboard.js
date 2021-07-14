@@ -20,7 +20,8 @@ import {
   Box,
   Typography,
   Divider,
-  Container,Badge
+  Container,
+  Badge,
 } from "@material-ui/core";
 
 import Styles from "../../Styles/Candidate Styles/dashboard.styles";
@@ -39,7 +40,8 @@ import {
   Info as InfoIco,
   Public as PublicIcon,
   ChevronLeft as LeftIcon,
-  Notifications
+  Notifications,
+  DoneAll,
 } from "@material-ui/icons/";
 import {
   Edit,
@@ -47,11 +49,11 @@ import {
   Trash2,
   Twitter,
   Linkedin,
-  Briefcase
+  Briefcase,
 } from "react-feather";
 import axios from "axios";
 import { imgurl, url } from "../../Api/Url";
-
+// main()
 const CandidateDashboard = () => {
   const theme = useTheme();
   const styleProps = {
@@ -63,12 +65,13 @@ const CandidateDashboard = () => {
   const [cvopen, setcvopen] = useState(false);
   const [state, setstate] = useState("");
   const [openRegister, setopenRegister] = useState(false);
+  const [notification, setnotification] = useState(false);
   const [loading, setloading] = useState(false);
   const [open, setopen] = useState(false);
   const [test, settest] = useState([]);
-  const [category, setcategory] = useState("");
-  const [jobtitile, setjobtitile] = useState("");
-  const [company, setcompany] = useState("");
+  const [notify, setnotify] = useState([]);
+  const [notifylen, setnotifylen] = useState([]);
+
   const logout = () => {
     localStorage.removeItem("candidate");
     window.location.reload();
@@ -76,28 +79,19 @@ const CandidateDashboard = () => {
   const candidateid = localStorage.getItem("candidateid");
   //candidate notification
   const candidateNotification = async () => {
+    setnotification(true);
     try {
       setopen(true);
       const { data } = await axios.get(
         `${url}/notificationsForApprovedJobs/${candidateid}`
       );
-      const catogory = data.results.map((val) =>
-        val.approved.map((val) => val.jobid.category)
-      );
-      const jobtitle = data.results.map((val) =>
-        val.approved.map((val) => val.jobid.jobtitle)
-      );
-      const companyname = data.results.map((val) =>
-        val.approved.map((val) => val.jobid.companyname)
-      );
-      setcategory(catogory);
-      setjobtitile(jobtitle);
-      setcompany(companyname);
+      // console.log(data);
+      setnotify(data.results);
+      setnotification(false);
     } catch (error) {
       console.log(error);
     }
   };
-  console.log(category);
   // get the cv data
   const getcvdata = async () => {
     setcvopen(true);
@@ -111,7 +105,15 @@ const CandidateDashboard = () => {
       console.log(error);
     }
   };
+  // get length only
+  const candidateNotificationLength = async () => {
+    const { data } = await axios.get(
+      `${url}/notificationsForApprovedJobs/${candidateid}`
+    );
+    setnotifylen(data.results.length);
+  };
   useEffect(() => {
+    candidateNotificationLength();
     if (!candidate) {
       setopenlogin(true);
     } else {
@@ -307,8 +309,14 @@ const CandidateDashboard = () => {
                 <Button variant="contained" className={classes.ProfileBtn}>
                   View Profile
                 </Button>
-                <Badge fontSize="large" badgeContent={"new"} color="secondary" style={{width:"28px",height:"22px",cursor:"pointer"}} onClick={candidateNotification}>
-                <Notifications color="primary"/>
+                <Badge
+                  fontSize="large"
+                  badgeContent={notifylen ? notifylen : null}
+                  color="secondary"
+                  style={{ cursor: "pointer" }}
+                  onClick={candidateNotification}
+                >
+                  <Notifications color="primary" />
                 </Badge>
               </div>
             </Grid>
@@ -728,15 +736,49 @@ const CandidateDashboard = () => {
 
       {/* notifications */}
       <Dialog open={open} onClose={() => setopen(false)}>
-        <DialogTitle></DialogTitle>
-        <DialogContent>
-          You have applied as {jobtitile} develpor in field of {category} in{" "}
-          {company}.Your job was approved{" "}
-        </DialogContent>
+        <DialogTitle
+          style={{
+            paddingLeft: "100px",
+            paddingRight: "100px",
+            marginBottom: "-30px",
+          }}
+        >
+          <Typography variant="h5" color="secondary">
+            Notifications
+          </Typography>
+        </DialogTitle>
+        {notification ? (
+          <p style={{ paddingLeft: "100px", paddingRight: "100px" }}>....</p>
+        ) : (
+          <div>
+            <DialogContent>
+              {notify.map((val) => (
+                <Box my={1}>
+                  <Button
+                    startIcon={<DoneAll color="secondary" />}
+                    variant="outlined"
+                  >
+                    <Typography
+                      style={{ fontSize: "12px", fontStyle: "revert" }}
+                      color="primary"
+                    >
+                      You have applied as {val.jobtitle} developer in {val.companyname}{" "}
+                      and your application is approved.
+                    </Typography>
+                  </Button>
+                </Box>
+              ))}
+            </DialogContent>
+            <Container>
+              {" "}
+              <Divider />
+            </Container>
+          </div>
+        )}
         <DialogActions>
           <Button
             onClick={() => setopen(false)}
-            variant="outlined"
+            variant="contained"
             size="small"
             color="secondary"
           >
